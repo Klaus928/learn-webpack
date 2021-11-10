@@ -17,7 +17,7 @@
 - 使用 [watch mode(观察模式)](https://webpack.docschina.org/guides/development/#using-watch-mode)
   `webpack --watch`
   缺点： 每次都需要刷新浏览器
-- 使用 [ webpack-dev-server](https://webpack.docschina.org/guides/development/#using-webpack-dev-server)
+- 使用 [ webpack-dev-server](https://webpack.docschina.org/guides/development/#using-webpack-dev-server) , 在内存中编译，而非写入磁盘
   > Tip :
   > webpack-dev-server 会从 output.path 中定义的目录为服务提供 bundle 文件，即，文件将可以通过 `http://[devServer.host]:[devServer.port]/[output.publicPath]/[output.filename]` 进行访问
 - 使用 [webpack-dev-middleware](https://webpack.docschina.org/guides/development/#using-webpack-dev-middleware)（暂时只涉及上面两种）
@@ -134,3 +134,46 @@ getComponent().then((component) => {
 ![](https://img-blog.csdnimg.cn/cb06962e01b1456eb7b397d6baa396de.png?x-oss-process=image/watermark,type_ZHJvaWRzYW5zZmFsbGJhY2s,shadow_50,text_Q1NETiBA6ZOB5p-xZWY=,size_20,color_FFFFFF,t_70,g_se,x_16)
 
 可以看到打包出来的文件体积减小了许多
+
+## 环境变量
+
+`npx webpack --env goal=local --env production --progress`
+
+webpack.config.js 中 module.exports 转换为函数可以通过 env 访问到提供的环境变量
+
+## 构建性能
+
+### 开发环境
+
+- 增量编译
+- 在内存中编译
+- Devtool,最佳选择是 eval-cheap-module-source-map
+- 避免在生产环境下才会用到的工具
+- 最小化 entry chunk，开启 `runtimeChunk: true`，优化 optimization 配置
+- 输出结果不携带路径信息
+  ```javascript
+  output: {
+    pathinfo: false,
+  },
+  ```
+  - ts-loader 传入`transpileOnly: true` 选项，以缩短使用 ts-loader 时的构建时间，使用此选项会关闭类型检查
+
+### 生产环境
+
+关闭 source Map， 避免消耗资源
+
+### 工具相关问题
+
+Babel
+
+- 最小化项目中的 preset/plugin 数量。
+
+TypeScript
+
+- 在单独的进程中使用 fork-ts-checker-webpack-plugin 进行类型检查。
+- 配置 loader 跳过类型检查。
+- 使用 ts-loader 时，设置 happyPackMode: true / transpileOnly: true。
+
+Sass
+
+- node-sass 中有个来自 Node.js 线程池的阻塞线程的 bug。 当使用 thread-loader 时，需要设置 workerParallelJobs: 2。
