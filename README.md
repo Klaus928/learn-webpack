@@ -26,7 +26,7 @@
 
 代码分离是 webpack 中最引人注目的特性之一。<p style="color: #329a59;font-size: 14px;">此特性能够把代码分离到不同的 bundle 中，然后可以按需加载或并行加载这些文件。代码分离可以用于获取更小的 bundle，以及控制资源加载优先级，如果使用合理，会极大影响加载时间</p>
 
-一、 入口起点
+### 一、 入口起点
 
 ```javascript
  entry: {
@@ -62,7 +62,8 @@
 ```
 
 重新打包后构建结果如下，
-![alt 属性文本](https://img-blog.csdnimg.cn/e1df98f93bfd4b3e81180b03cfefbbd2.png?x-oss-process=image/watermark,type_ZHJvaWRzYW5zZmFsbGJhY2s,shadow_50,text_Q1NETiBA6ZOB5p-xZWY=,size_20,color_FFFFFF,t_70,g_se,x_16)
+
+![](https://img-blog.csdnimg.cn/e1df98f93bfd4b3e81180b03cfefbbd2.png?x-oss-process=image/watermark,type_ZHJvaWRzYW5zZmFsbGJhY2s,shadow_50,text_Q1NETiBA6ZOB5p-xZWY=,size_20,color_FFFFFF,t_70,g_se,x_16)
 可以看到除了生成 shared.bundle.js，index.bundle.js 和 another.bundle.js 之外，还生成了一个 runtime.bundle.js 文件
 
 使用 [SplitChunksPlugin](https://webpack.docschina.org/guides/code-splitting/#splitchunksplugin)
@@ -77,5 +78,29 @@
 ```
 
 以下是重新构建的结果：
+
 ![](https://img-blog.csdnimg.cn/81135fc675f3401e8f9c966887bbd43e.png?x-oss-process=image/watermark,type_ZHJvaWRzYW5zZmFsbGJhY2s,shadow_50,text_Q1NETiBA6ZOB5p-xZWY=,size_20,color_FFFFFF,t_70,g_se,x_16)
 可以看到共同的模块被分离到 shared.bundle.js 里，index.bundle.js 和 another.bundle.js 体积更小了
+
+### 二、动态导入
+
+- 一、使用 import() 动态语法进行导入
+- 二、使用 require.ensure
+
+只使用第一种
+
+```javascript
+async function getComponent() {
+  const element = document.createElement('div')
+  const { default: _ } = await import('lodash')
+  element.innerHTML = _.join(['Hello', 'webpack'], ' ')
+  return element
+}
+getComponent().then((component) => {
+  document.body.appendChild(component)
+})
+```
+
+构建结果如下：
+
+![](https://img-blog.csdnimg.cn/f96caba5cf08422fbba2190fc3db90fd.png?x-oss-process=image/watermark,type_ZHJvaWRzYW5zZmFsbGJhY2s,shadow_50,text_Q1NETiBA6ZOB5p-xZWY=,size_20,color_FFFFFF,t_70,g_se,x_16)

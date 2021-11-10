@@ -1,17 +1,22 @@
-import _ from 'lodash'
-import printMe from './print.js'
+// import _ from 'lodash'
 
-function component() {
+// function getComponent() {
+//   return import('lodash')
+//     .then(({ default: _ }) => {
+//       const element = document.createElement('div')
+
+//       element.innerHTML = _.join(['Hello', 'webpack'], ' ')
+//       return element
+//     })
+//     .catch((error) => 'An error occurred while loading the component')
+// }
+// 简化
+async function getComponent() {
   const element = document.createElement('div')
-  const btn = document.createElement('button')
-
-  // lodash（目前通过一个 script 引入）对于执行这一行是必需的
-  element.innerHTML = _.join(['Hello', 'webpack'], '  ')
-
-  btn.innerHTML = 'haha ,Click me and check the console!'
-  btn.onclick = printMe
-  element.appendChild(btn)
+  const { default: _ } = await import('lodash')
+  element.innerHTML = _.join(['Hello', 'webpack'], ' ')
   return element
 }
-
-document.body.appendChild(component())
+getComponent().then((component) => {
+  document.body.appendChild(component)
+})
