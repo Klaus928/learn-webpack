@@ -2,16 +2,20 @@ const { resolve } = require('path')
 const HtmlWebpackPlugin = require('html-webpack-plugin')
 
 module.exports = {
-  mode: 'production',
+  mode: 'development',
   entry: { index: './src/index.js', print: './src/print.js' },
   output: {
     filename: '[name].bundle.js',
     path: resolve(__dirname, 'dist'),
     clean: true,
   },
+  devtool: 'inline-source-map',
   plugins: [
     new HtmlWebpackPlugin({
-      title: '管理输出',
+      title: 'Development',
     }),
   ],
+  devServer: {
+    static: './dist',
+  },
 }
