@@ -1,11 +1,16 @@
-import _ from 'lodash'
-import Print from './print'
+// import _ from 'lodash'
+import { print } from './print'
+// 测试tree-shaking
 import { add } from './test'
 function component() {
   const element = document.createElement('div')
-  element.innerHTML = _.join(['Hello', 'webpack'], ' ')
-  element.onclick = Print.bind(null, 'Hello webpack!')
-  console.log(add(1, 2))
+  element.innerHTML = 'hello webpack' + add(1, 2)
+  // element.innerHTML = _.join(['Hello', 'webpack'], ' ')
+  element.onclick = () => {
+    print('Hello webpack!')
+  }
+  console.log('VERSION', VERSION)
+  console.log('NODE_ENV', process.env.NODE_ENV)
   return element
 }
 
